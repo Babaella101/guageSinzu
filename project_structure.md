@@ -82,7 +82,7 @@ guage/
       compare_test.go                     # every compared field, order and run metadata ignored, existence, no values (5.1)
     sep1/
       {fetch,guard,parse}.go               # guarded identity acquisition: hostname check, dial-time IP guard, caps (3.5)
-      {fetch_test,guard_test,parse_test,accounts_test,home_domain_test,redirect_test}.go # SSRF, rebinding, redirect, size, sanitizer-boundary and parse tests (3.5, 7.48 to 7.50)
+      {fetch_test,guard_test,parse_test,accounts_test,home_domain_test,redirect_test,size_test,retry_test,ip_class_test}.go # SSRF, rebinding, redirect, size, retry, address-class, sanitizer-boundary and parse tests (3.5, 7.48 to 7.50, 7.71 to 7.73)
     rules/
       {rules,account,signers,thresholds,flags,identity}.go # registry and pure rule boundaries; identity and signers read the two role expectations 3.4 defines (3.1 to 3.5 done)
       facts.go                            # rules.Facts: the observations of one context, in the same pure shape as a rule and returning no finding (3.7)

@@ -164,6 +164,9 @@ backlog() {
     '7.69	type: test	area: source	test(source): return ErrTooLarge for a body one byte over the cap' \
     '7.70	type: test	area: source	test(source): check passphrases without echoing either value' \
     '7.68	type: test	area: source	test(source): keep exponential backoff under the five second ceiling' \
+    '7.71	type: test	area: sep1	test(sep1): record an oversized stellar.toml as StepSize, not a read' \
+    '7.72	type: test	area: sep1	test(sep1): honour Retry-After on 429 and give up after the retry budget' \
+    '7.73	type: test	area: sep1	test(sep1): classify NAT64, 6to4, carrier NAT and unique local addresses' \
     'G1	type: test	area: rules	gate: every P0 requirement has passing tests' \
     'G2	type: test	area: rules	gate: every scenario has a fixture and expected findings' \
     'G3	type: test	area: cli	gate: fail-closed paths all exit non-zero' \
