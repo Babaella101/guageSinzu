@@ -1,6 +1,6 @@
 # ROADMAP: Gauge
 
-Last updated: 2026-11-25T09:05Z (tasks 7.13, 7.44 and 7.45: rules contract tests)
+Last updated: 2026-11-25T10:22Z (tasks 7.75 to 7.77: source and policy regression tests added)
 Roadmap version: 3
 
 This file is the single source of truth for remaining work. It is read before every task and updated after every change.
@@ -40,7 +40,7 @@ The repository is 100% ready when every task in Phases 0 to 6 is done and every 
 | 4 | Dogfood and release v0.1.0 | 4 | 9 | 44% |
 | 5 | v0.2 features | 10 | 11 | 90% |
 | 6 | Release v0.2.0 and community | 3 | 5 | 60% |
-| 7 (backlog) | Backlog | 70 | 74 | 94% |
+| 7 (backlog) | Backlog | 73 | 77 | 94% |
 | **Phases 0 to 6** | **Readiness total** | **72** | **80** | **90%** |
 | Gates | G1 to G10 | 8 | 10 | 80% |
 <!-- PROGRESS:END -->
@@ -300,6 +300,9 @@ Constraint on the two remaining experimental tasks: Gauge never builds or submit
 - [x] **7.72** test(sep1): honour Retry-After on 429 and give up after the retry budget. M. Deps: 3.5. Done when: `internal/sep1/retry_test.go` injects a recording `sleep` and pins exactly `MaxRetries+1` attempts with delays of 1s, exponential backoff and a 5s cap for `Retry-After: 1`, no header and `120`, never the header's 120s; a 429, 429, 200 sequence reaches `StepOK` in three requests while 404 and 204 each stop after one. (done 2026-11-23; issue #152)
 - [x] **7.73** test(sep1): classify NAT64, 6to4, carrier NAT and unique local addresses. M. Deps: 3.5. Done when: `internal/sep1/ip_class_test.go` pins NAT64 zero-padding forms for private, loopback and public embedded IPv4, a near-NAT64 form with non-zero padding that must not unwrap, 6to4 forms embedding loopback, multicast, unspecified and private IPv4, and v4-mapped public and carrier NAT forms; every row asserts `Class`, `Class.String()` and `Dialable`. (done 2026-11-23; issue #153)
 - [x] **7.74** test(model): fingerprint is the final SortFindings tiebreak, so tied findings order identically after a shuffle. S. Deps: none. Done when: `SortFindings` compares severity descending, then account, rule ID and fingerprint ascending; `internal/model/sort_tiebreak_test.go` shuffles four tied findings into identical output; `TestSortFindingsIsStable` pins the fingerprint key; `go test ./internal/model -run 'TestSortFindings|TestSortTiebreak' -race -count=1` passes. Implements #127.
+- [x] **7.75** test(policy): scan shipped policies for seed-shaped tokens. S. Deps: none. Done when: `internal/policy/example_seed_test.go` scans `gauge.example.toml` and every regular file under `testdata/policy` with both `containsSeed` and a byte scan, and fails if fewer than two paths are found. (done 2026-11-25: the shipped example and `.gitkeep` are both scanned; a temporary shape-only fixture triggered both checks and was removed.)
+- [x] **7.76** test(source): prove the Horizon client never follows redirects. S. Deps: none. Done when: `internal/source/redirect_test.go` serves a 302 from one listener to a second, exercises both `Account` and `Network`, asserts `ErrStatus`, one source request per operation, zero target requests, and no redirect target in either error. (done 2026-11-25: the test passed; temporarily removing `CheckRedirect` made both operations follow the redirect and the test fail, then the guard was restored.)
+- [x] **7.77** test(source): pin integer-only Retry-After parsing and its cap. S. Deps: none. Done when: `internal/source/retry_after_test.go` directly tables empty, HTTP date, zero, negative, positive, capped and whitespace-padded values, asserts exact durations, non-negative returns and the `maxRetryAfter` ceiling. (done 2026-11-25.)
 ## 6. Dependency map (critical path)
 
 `0.2, 0.4 -> 1.1 -> 1.4 -> 2.1 -> 2.2, 2.3, 2.5 -> 2.7 -> 2.8 -> 2.9 -> 3.1 to 3.5 -> 3.7 -> 4.1 -> 4.8`
@@ -451,3 +454,4 @@ Newest first. One row per merged change.
 | 2026-10-28 | Repo hygiene for program submission: CI and roadmap-gate workflows, gate and progress scripts with an eight-case self-test, Dependabot, CODEOWNERS, issue forms, README/CONTRIBUTING/SECURITY rewritten to the verified approved-repo pattern, banner, plus a `protect main` ruleset, label taxonomy, topics and a roadmap-derived issue backlog | 1.13, 1.3, 1.5, 1.6, 1.8, 1.9, 1.10, D-11, D-12, 5.8 |
 | 2026-10-28 | Owner-authorized scaffold: root brief copies, Go module, package and file placeholders, model and policy declarations, source interface, non-operational CLI, README/CONTRIBUTING/SECURITY/PR-template drafts, structure and decision documentation | 1.1, 1.4, 1.8, 1.10, 1.11, 1.12, D-01 to D-04, D-09, D-10 |
 | 2026-10-28 | First drafts of the full doc set (PRD, ARCHITECTURE, ESSENTIALS, project_structure, AGENTS, CLAUDE, ROADMAP) with a red-team pass | 0.1 |
+| 2026-11-25 | Added direct regression tests for shipped policy seed scanning, Horizon redirect refusal and the integer-only `Retry-After` parser. The redirect test was mutation-checked with `CheckRedirect` removed; the policy scan rejected a temporary shape-only fixture, which was removed. No production behavior changed. | 7.75, 7.76, 7.77 |
