@@ -1,6 +1,6 @@
 # ROADMAP: Gauge
 
-Last updated: 2026-11-25T10:33Z (tasks 7.84 to 7.86: strkey seed, canonical and version boundaries pinned)
+Last updated: 2026-11-25T10:35Z (tasks 7.87 to 7.89: run layer usage errors, nil policy and golden orphans pinned)
 Roadmap version: 3
 
 This file is the single source of truth for remaining work. It is read before every task and updated after every change.
@@ -40,7 +40,7 @@ The repository is 100% ready when every task in Phases 0 to 6 is done and every 
 | 4 | Dogfood and release v0.1.0 | 4 | 9 | 44% |
 | 5 | v0.2 features | 10 | 11 | 90% |
 | 6 | Release v0.2.0 and community | 3 | 5 | 60% |
-| 7 (backlog) | Backlog | 79 | 83 | 95% |
+| 7 (backlog) | Backlog | 82 | 86 | 95% |
 | **Phases 0 to 6** | **Readiness total** | **72** | **80** | **90%** |
 | Gates | G1 to G10 | 8 | 10 | 80% |
 <!-- PROGRESS:END -->
@@ -309,6 +309,9 @@ Constraint on the two remaining experimental tasks: Gauge never builds or submit
 - [x] **7.84** test(strkey): pin seed detection on truncated and corrupted seeds, and prove no error carries the value out. S. Deps: none. Done when: `internal/strkey/seed_test.go` tables truncated, corrupted and non-seed inputs against `IsSeed` and asserts the error text never quotes the input.
 - [x] **7.85** test(strkey): pin the exact sentinel for each non-canonical spelling, including the unused-bit form Go's base32 decoder discards. S. Deps: none. Done when: `internal/strkey/canonical_test.go` names the sentinel each spelling returns through `Classify`.
 - [x] **7.86** test(strkey): build every version and payload boundary with an encoder the implementation does not share. S. Deps: none. Done when: `internal/strkey/version_test.go` asserts the kind and payload rule for each boundary byte.
+- [x] **7.87** test(run): an invalid job returns `ErrUsage` and no report, so a caller cannot print a half-built result. S. Deps: none. Done when: `internal/run/validate_usage_test.go` tables each refused request and asserts the zero report.
+- [x] **7.88** test(run): an audit with a nil policy is a usage error rather than a nil dereference. S. Deps: none. Done when: `internal/run/audit_nil_policy_test.go` drives `Audit` with no policy and asserts `ErrUsage`.
+- [x] **7.89** test(run): every golden in `testdata/golden` belongs to a scenario the suite still runs. S. Deps: none. Done when: `internal/run/golden_orphan_test.go` fails on a golden whose basename no scenario names, so a deleted scenario cannot leave a stale file behind.
 ## 6. Dependency map (critical path)
 
 `0.2, 0.4 -> 1.1 -> 1.4 -> 2.1 -> 2.2, 2.3, 2.5 -> 2.7 -> 2.8 -> 2.9 -> 3.1 to 3.5 -> 3.7 -> 4.1 -> 4.8`
@@ -463,3 +466,4 @@ Newest first. One row per merged change.
 | 2026-11-25 | Added direct regression tests for shipped policy seed scanning, Horizon redirect refusal and the integer-only `Retry-After` parser. The redirect test was mutation-checked with `CheckRedirect` removed; the policy scan rejected a temporary shape-only fixture, which was removed. No production behavior changed. | 7.75, 7.76, 7.77 |
 | 2026-11-24 | Tasks 7.81, 7.82, 7.83 (close #211, close #212, close #213): install signal.NotifyContext in CLI main to cancel in-flight check and audit runs on SIGINT or SIGTERM and exit 3 with empty stdout and one stderr line; reject extra arguments on version with exit 2, error message and usage text; add duplicate endpoint test ensuring userinfo credentials and private hosts are never echoed in stderr or stdout. | 7.75, 7.76, 7.77 |
 | 2026-11-25 | Tasks 7.84 to 7.86 (closing #206, #207, #208): pin the strkey boundaries. The seed, canonical spelling and version tests build their inputs with an independent encoder, so a change to the shared one cannot move the expectation with it. |
+| 2026-11-25 | Tasks 7.87 to 7.89 (closing #205, #206, #207): pin the run layer's edges. Invalid jobs return `ErrUsage` with an empty report, an audit without a policy is a usage error rather than a crash, and a golden with no live scenario fails the suite. |
